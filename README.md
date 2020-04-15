@@ -31,4 +31,8 @@ All arguments are optional. If one is required and it is not provided, the scrip
 | --verbose       | Show extra information?                                                        | False         |  
 | --help          | Show the help message and exit.                                                |               |  
 
+## Notes
+
+This script expects all of your media files to be in the correct folder structure for Plex. If your files are not organized in the way that Plex [recommends](https://support.plex.tv/articles/naming-and-organizing-your-movie-media-files/), you **will not** be able to use this.
+
 Enjoy!
