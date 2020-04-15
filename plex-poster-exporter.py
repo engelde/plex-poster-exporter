@@ -158,13 +158,13 @@ def main(ctx, username: str, password: str, server: str, library: str, assets: s
                     print('\033[91mERROR:\033[0m', 'failed to extract the path.')
                     sys.exit()
 
-                if (assets is 'all' or assets is 'posters') and hasattr(item, 'thumb') and item.thumb != None and season.title != None:
-                    plex.download(item.thumb, (season.title+'-poster' if season.title != 'Specials' else 'season-specials-poster')+'.jpg', path)
-                if (assets is 'all' or assets is 'backgrounds') and hasattr(item, 'art') and item.art != None and season.title != None:
-                    plex.download(item.art, (season.title+'-background' if season.title != 'Specials' else 'season-specials-background')+'.jpg', path)
+                if (assets is 'all' or assets is 'posters') and hasattr(season, 'thumb') and season.thumb != None and season.title != None:
+                    plex.download(season.thumb, (season.title+'-poster' if season.title != 'Specials' else 'season-specials-poster')+'.jpg', path)
+                if (assets is 'all' or assets is 'backgrounds') and hasattr(season, 'art') and season.art != None and season.title != None:
+                    plex.download(season.art, (season.title+'-background' if season.title != 'Specials' else 'season-specials-background')+'.jpg', path)
                 # TODO: Add banners for seasons?
-                # if (assets is 'all' or assets is 'banners') and hasattr(item, 'banner') and item.banner != None and season.title != None:
-                #     plex.download(item.banner, (season.title+'-banner' if season.title != 'Specials' else 'season-specials-banner')+'.jpg', path)
+                # if (assets is 'all' or assets is 'banners') and hasattr(season, 'banner') and season.banner != None and season.title != None:
+                #     plex.download(season.banner, (season.title+'-banner' if season.title != 'Specials' else 'season-specials-banner')+'.jpg', path)
 
     if verbose:
         print('\n\033[94mTOTAL SKIPPED:\033[0m', str(plex.skipped))
