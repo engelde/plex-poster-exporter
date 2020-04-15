@@ -56,7 +56,6 @@ class Plex():
             print('\033[91mERROR:\033[0m', 'failed to connect to Plex. Check your username and password.')
             sys.exit()
 
-
     def getServer(self):
         self.servers = [ _ for _ in self.account.resources() if _.product == 'Plex Media Server' ]
         if not self.servers:
@@ -68,7 +67,6 @@ class Plex():
             self.server = self.server(self.server)
         if self.verbose:
             print('\033[94mSERVER:\033[0m', self.server.friendlyName)
-
 
     def getLibrary(self):
         self.libraries = [ _ for _ in self.server.library.sections() if _.type in {'movie', 'show'} ]
