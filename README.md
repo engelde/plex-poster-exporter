@@ -35,7 +35,7 @@ All arguments are optional. If one is required and it is not provided, the scrip
 
 This script expects all of your media files to be in the correct folder structure for Plex. If your files are not organized in the way that Plex recommends, you **will not** be able to use this.
 
-[Movies](https://support.plex.tv/articles/naming-and-organizing-your-movie-media-files/)
-[Series](https://support.plex.tv/articles/naming-and-organizing-your-tv-show-files/)
+[Movies](https://support.plex.tv/articles/naming-and-organizing-your-movie-media-files/)  
+[Series](https://support.plex.tv/articles/naming-and-organizing-your-tv-show-files/)  
 
 Enjoy!
