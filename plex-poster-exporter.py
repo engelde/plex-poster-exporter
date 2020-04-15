@@ -159,7 +159,7 @@ def main(ctx, username: str, password: str, server: str, library: str, assets: s
                     sys.exit()
 
                 if (assets is 'all' or assets is 'posters') and hasattr(item, 'thumb') and item.thumb != None and season.title != None:
-                    plex.download(item.thumb, (season.title if season.title != 'Specials' else 'season-specials-poster')+'.jpg', path)
+                    plex.download(item.thumb, (season.title+'-poster' if season.title != 'Specials' else 'season-specials-poster')+'.jpg', path)
                 if (assets is 'all' or assets is 'backgrounds') and hasattr(item, 'art') and item.art != None and season.title != None:
                     plex.download(item.art, (season.title+'-background' if season.title != 'Specials' else 'season-specials-background')+'.jpg', path)
                 # TODO: Add banners for seasons?
