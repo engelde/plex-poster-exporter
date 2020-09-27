@@ -140,13 +140,13 @@ def main(ctx, username: str, password: str, server: str, library: str, assets: s
             print('\033[91mERROR:\033[0m', 'failed to extract the path.')
             sys.exit()
 
-        if (assets is 'all' or assets == 'posters') and hasattr(item, 'thumb') and item.thumb != None:
+        if (assets == 'all' or assets == 'posters') and hasattr(item, 'thumb') and item.thumb != None:
             plex.download(item.thumb, 'poster.jpg', path)
-        if (assets is 'all' or assets == 'backgrounds') and hasattr(item, 'art') and item.art != None:
+        if (assets == 'all' or assets == 'backgrounds') and hasattr(item, 'art') and item.art != None:
             plex.download(item.art, 'background.jpg', path)
-        if (assets is 'all' or assets == 'banners') and hasattr(item, 'banner') and item.banner != None:
+        if (assets == 'all' or assets == 'banners') and hasattr(item, 'banner') and item.banner != None:
             plex.download(item.banner, 'banner.jpg', path)
-        if (assets is 'all' or assets == 'themes') and hasattr(item, 'theme') and item.theme != None:
+        if (assets == 'all' or assets == 'themes') and hasattr(item, 'theme') and item.theme != None:
             plex.download(item.theme, 'theme.mp3', path)
 
         if plex.library.type == 'show':
@@ -156,13 +156,13 @@ def main(ctx, username: str, password: str, server: str, library: str, assets: s
                     print('\033[91mERROR:\033[0m', 'failed to extract the path.')
                     sys.exit()
 
-                if (assets is 'all' or assets is 'posters') and hasattr(season, 'thumb') and season.thumb != None and season.title != None:
+                if (assets == 'all' or assets == 'posters') and hasattr(season, 'thumb') and season.thumb != None and season.title != None:
                     plex.download(season.thumb, (season.title if season.title != 'Specials' else 'season-specials-poster')+'.jpg', path)
                 # TODO: Add backgrounds for seasons?
-                # if (assets is 'all' or assets is 'backgrounds') and hasattr(season, 'art') and season.art != None and season.title != None:
+                # if (assets == 'all' or assets == 'backgrounds') and hasattr(season, 'art') and season.art != None and season.title != None:
                 #     plex.download(season.art, (season.title+'-background' if season.title != 'Specials' else 'season-specials-background')+'.jpg', path)
                 # TODO: Add banners for seasons?
-                # if (assets is 'all' or assets is 'banners') and hasattr(season, 'banner') and season.banner != None and season.title != None:
+                # if (assets == 'all' or assets == 'banners') and hasattr(season, 'banner') and season.banner != None and season.title != None:
                 #     plex.download(season.banner, (season.title+'-banner' if season.title != 'Specials' else 'season-specials-banner')+'.jpg', path)
 
     if verbose:
