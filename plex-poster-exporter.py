@@ -19,8 +19,7 @@ except:
 # plexapi
 try:
     import plexapi.utils
-    from plexapi.server import PlexServer, CONFIG
-    from plexapi.myplex import MyPlexAccount
+    from plexapi.server import PlexServer
     from plexapi.exceptions import BadRequest
 except:
     print('\033[91mERROR:\033[0m', 'plexapi is not installed.')
@@ -32,39 +31,28 @@ VERSION = 0.1
 
 # plex
 class Plex():
-    def __init__(self, username=None, password=None, server=None, library=None, overwrite=False, verbose=False):
-        self.account = None
-        self.username = username
-        self.password = password
-        self.servers = []
-        self.server = server
+    def __init__(self, baseurl=None, token=None, library=None, overwrite=False, verbose=False, output_path=None):
+        self.baseurl = baseurl
+        self.token = token
+        self.server = None
         self.libraries = []
         self.library = library
         self.overwrite = overwrite
         self.verbose = verbose
+        self.output_path = output_path
         self.downloaded = 0
         self.skipped = 0
 
-        self.getAccount()
         self.getServer()
         self.getLibrary()
 
-    def getAccount(self):
+    def getServer(self):
         try:
-            self.account = MyPlexAccount(self.username, self.password)
+            self.server = PlexServer(self.baseurl, self.token)
         except BadRequest as e:
-            print('\033[91mERROR:\033[0m', 'failed to connect to Plex. Check your username and password.')
+            print('\033[91mERROR:\033[0m', 'failed to connect to Plex. Check your server URL and token.')
             sys.exit()
 
-    def getServer(self):
-        self.servers = [ _ for _ in self.account.resources() if _.product == 'Plex Media Server' ]
-        if not self.servers:
-            print('\033[91mERROR:\033[0m', 'no available servers.')
-            sys.exit()
-        if self.server == None or self.servers not in [ _.name for _ in self.servers ]:
-            self.server = plexapi.utils.choose('Select Server', self.servers, 'name').connect()
-        else:
-            self.server = self.server(self.server)
         if self.verbose:
             print('\033[94mSERVER:\033[0m', self.server.friendlyName)
 
@@ -97,32 +85,40 @@ class Plex():
                         return part.file.rsplit('/', 2)[0]
 
     def download(self, url=None, filename=None, path=None):
-        if not self.overwrite and os.path.isfile(path+'/'+filename):
+        path = path.lstrip('/')
+        abs_path = os.path.join(self.output_path, path)
+
+        if not self.overwrite and os.path.isfile(os.path.join(abs_path, filename)):
             if self.verbose:
-                print('\033[93mSKIPPED:\033[0m', path+'/'+filename)
+                print('\033[93mSKIPPED:\033[0m', os.path.join(abs_path, filename))
             self.skipped += 1
         else:
-            if plexapi.utils.download(self.server._baseurl+url, self.account._token, filename=filename, savepath=path):
+            if plexapi.utils.download(self.server._baseurl+url, self.token, filename=filename, savepath=abs_path):
                 if self.verbose:
-                    print('\033[92mDOWNLOADED:\033[0m', path+'/'+filename)
+                    print('\033[92mDOWNLOADED:\033[0m', os.path.join(abs_path, filename))
                 self.downloaded += 1
             else:
-                print('\033[91mDOWNLOAD FAILED:\033[0m', path+'/'+filename)
+                print('\033[91mDOWNLOAD FAILED:\033[0m', os.path.join(abs_path, filename))
                 sys.exit()
+
+
+
+
+
 
 # main
 @click.command(context_settings=dict(help_option_names=['-h', '--help']))
 @click.version_option(prog_name=NAME, version=VERSION, message='%(prog)s v%(version)s')
-@click.option('--username', prompt='Plex Username', help='The username for Plex.', required=True)
-@click.option('--password', prompt='Plex Password', help='The password for Plex.', required=True)
-@click.option('--server', help='The Plex server name.')
+@click.option('--baseurl', prompt='Plex Server URL', help='The base URL for the Plex server.', required=True)
+@click.option('--token', prompt='Plex Token', help='The authentication token for Plex.', required=True)
 @click.option('--library', help='The Plex library name.',)
 @click.option('--assets', help='Which assets should be exported?', type=click.Choice(['all', 'posters', 'backgrounds', 'banners', 'themes']), default='all')
+@click.option('--output-path', default='/', help='The output path for the downloaded assets. Change to a hardcoded location to run script as a sort of dry run.')
 @click.option('--overwrite', help='Overwrite existing assets?', is_flag=True)
 @click.option('--verbose', help='Show extra information?', is_flag=True)
 @click.pass_context
-def main(ctx, username: str, password: str, server: str, library: str, assets: str, overwrite: bool, verbose: bool):
-    plex = Plex(username, password, server, library, overwrite, verbose)
+def main(ctx, baseurl: str, token: str, library: str, assets: str, overwrite: bool, verbose: bool, output_path: str):
+    plex = Plex(baseurl, token, library, overwrite, verbose, output_path)
 
     if verbose:
         print('\033[94mASSETS:\033[0m', assets)
@@ -156,8 +152,6 @@ def main(ctx, username: str, password: str, server: str, library: str, assets: s
                     print('\033[91mERROR:\033[0m', 'failed to extract the path.')
                     sys.exit()
 
-                if (assets == 'all' or assets == 'posters') and hasattr(season, 'thumb') and season.thumb != None and season.title != None:
-                    plex.download(season.thumb, (season.title if season.title != 'Specials' else 'season-specials-poster')+'.jpg', path)
                 # TODO: Add backgrounds for seasons?
                 # if (assets == 'all' or assets == 'backgrounds') and hasattr(season, 'art') and season.art != None and season.title != None:
                 #     plex.download(season.art, (season.title+'-background' if season.title != 'Specials' else 'season-specials-background')+'.jpg', path)
